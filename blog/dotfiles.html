@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dotfiles - Will Babbitt</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script>
+        // Set theme before page renders to prevent flash
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+</head>
+<body>
+    <nav>
+        <a href="../index.html">Home</a>
+        <a href="../blog.html">Blog</a>
+        <a href="../about.html">About</a>
+    </nav>
+    
+    <main class="content">
+        <article class="blog-post">
+            <h1>Dotfiles</h1>
+            <p class="meta">November 16, 2025</p>
+            
+            <!-- directives:[] -->
+            <div id="content">
+                <p>As part of my efforts to get more serious back into development and to lean into my technical career growth, I have been working on getting my Mac Studio out of peusdo storage and making it more of my main computer again. I have been cleaning up my drives and applications, setting up hotkeys and automations, and setting up a more or less fresh development environment, all while trying to lean into a more hobbyist and enthusiastic mindset. </p>
+                <p>This led me to wanting to file get a proper solution in place for my <a href="https://wiki.archlinux.org/title/Dotfiles">dotfiles</a>. </p>
+                <p>Now really I only care about my configurations for <code>zsh</code> since that is the only thing I have to worry about across machines right now, but I was really itching to git all of my aliases that I have set up on my work machine moved over to my terminal on the Studio. </p>
+                <p>I knew I wanted to have version control via git and wanted it be reasonably flexible for various kinds of configurations not just <code>zsh</code>, and I figured I didn't want to just track my entire <code>~./</code> directory in a repo. I knew this had to be a solved problem, so embracing my thought of "LLMs should make hobbyist development easier" I went to ChatGPT's recent 5.1 release.</p>
+                <p>After some quick prompting I confirmed some back of head thoughts around the idea of having a repo somewhere else and making symlinks to files within it, as well as coming up with a package that would do all the heavy lifting for me while also offering up some unexpected additional functionality.</p>
+                <p><a href="https://www.gnu.org/software/stow/manual/stow.html">GNU's <code>stow</code> command</a> was the solution I went with. Not native to MacOS, I grabbed the tool with <code>brew</code> and was up in running in no time. The <code>stow</code> command works by creating symlinks to my home directory from a <code>dotfiles</code> repo that I made on disk.</p>
+                <p>Here is what the repo looks like:</p>
+                <pre><code>~/dotfiles/
+                │
+                ├── zsh/
+                │   ├── .zshrc
+                │   └── .zprofilea</code></pre>
+                <p>After running <code>stow zsh</code> in <code>~./dotfiles</code>, my home directory looks like this:</p>
+                <pre><code>~/
+                │
+                ├── .zshrc        →  ~/dotfiles/zsh/.zshrc
+                └── .zprofile     →  ~/dotfiles/zsh/.zprofile</code></pre>
+                <p>The extra functionality I alluded to earlier is that <code>stow</code> has the <code>--dotfiles</code> flag. This will replace any occurrences of <code>dot-</code> at the start of a file with a <code>.</code>. This lets me keep the files in the repo as visible files. So in the end the repo and mapping looks like this:</p>
+                <pre><code>~/dotfiles/
+                │
+                └── zsh/
+                    ├── dot-zshrc
+                    └── dot-zprofile
+
+                ~/
+                │
+                ├── .zshrc        →  ~/dotfiles/zsh/dot-zshrc
+                └── .zprofile     →  ~/dotfiles/zsh/dot-zprofile</code></pre>
+                <p>I went ahead and made the repo as well and am calling this a success for a Sunday project. I'm happy to have solved a problem that has been in the back of my mind for ages. This is exactly the kind of stuff I want to spend more time doing.</p>
+                <p>I have to reflect to on how useful I found an LLM for all of this. From being able to ask specific questions and take out the middle steps of searching on Google and parsing Reddit and Stack Overflow pages, I could get a general idea right from the start. </p>
+                <p>Then it was super easy to use Google to look up the specific commands and techniques I was going to use and find forums and documentation to explain how to do this in a deterministic / evidence based way. I think this is a great workflow for LLMs. Use them for the initial brainstorming and to gather information that is quick and easy to verify. </p>
+                <p>It was also useful for making a cheatsheet for vim while I was writing up the repo's README, and for formatting those markdown file structure figures above. There are so many little uses that make it more fun for me to create. The spirit I want to get behind is focusing on how they lower the barrier to entry for me and how I can do more.</p>
+                <p>Special thanks to the participants of <a href="https://news.ycombinator.com/item?id=40284164">this hacker news thread</a> which led to this <a href="https://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html">blog post from Brandon Invergo</a>. I followed this more or less to the letter and had no issues.</p></div>
+            
+            <div class="blog-nav">
+                <a href="../blog.html">← Back to Blog</a>
+            </div>
+        </article>
+    </main>
+    
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+    <script src="../theme.js"></script>
+</body>
+</html>
