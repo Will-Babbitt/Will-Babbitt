@@ -35,26 +35,26 @@
                 <p><a href="https://www.gnu.org/software/stow/manual/stow.html">GNU's <code>stow</code> command</a> was the solution I went with. Not native to MacOS, I grabbed the tool with <code>brew</code> and was up in running in no time. The <code>stow</code> command works by creating symlinks to my home directory from a <code>dotfiles</code> repo that I made on disk.</p>
                 <p>Here is what the repo looks like:</p>
                 <pre><code>~/dotfiles/
-                │
-                ├── zsh/
-                │   ├── .zshrc
-                │   └── .zprofilea</code></pre>
+│
+├── zsh/
+│   ├── .zshrc
+│   └── .zprofilea</code></pre>
                 <p>After running <code>stow zsh</code> in <code>~./dotfiles</code>, my home directory looks like this:</p>
                 <pre><code>~/
-                │
-                ├── .zshrc        →  ~/dotfiles/zsh/.zshrc
-                └── .zprofile     →  ~/dotfiles/zsh/.zprofile</code></pre>
+│
+├── .zshrc        →  ~/dotfiles/zsh/.zshrc
+└── .zprofile     →  ~/dotfiles/zsh/.zprofile</code></pre>
                 <p>The extra functionality I alluded to earlier is that <code>stow</code> has the <code>--dotfiles</code> flag. This will replace any occurrences of <code>dot-</code> at the start of a file with a <code>.</code>. This lets me keep the files in the repo as visible files. So in the end the repo and mapping looks like this:</p>
                 <pre><code>~/dotfiles/
-                │
-                └── zsh/
-                    ├── dot-zshrc
-                    └── dot-zprofile
+│
+└── zsh/
+    ├── dot-zshrc
+    └── dot-zprofile
 
-                ~/
-                │
-                ├── .zshrc        →  ~/dotfiles/zsh/dot-zshrc
-                └── .zprofile     →  ~/dotfiles/zsh/dot-zprofile</code></pre>
+~/
+│
+├── .zshrc        →  ~/dotfiles/zsh/dot-zshrc
+└── .zprofile     →  ~/dotfiles/zsh/dot-zprofile</code></pre>
                 <p>I went ahead and made the repo as well and am calling this a success for a Sunday project. I'm happy to have solved a problem that has been in the back of my mind for ages. This is exactly the kind of stuff I want to spend more time doing.</p>
                 <p>I have to reflect to on how useful I found an LLM for all of this. From being able to ask specific questions and take out the middle steps of searching on Google and parsing Reddit and Stack Overflow pages, I could get a general idea right from the start. </p>
                 <p>Then it was super easy to use Google to look up the specific commands and techniques I was going to use and find forums and documentation to explain how to do this in a deterministic / evidence based way. I think this is a great workflow for LLMs. Use them for the initial brainstorming and to gather information that is quick and easy to verify. </p>

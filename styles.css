@@ -9,6 +9,7 @@
     --text-heading: #222;
     --text-meta: #666;
     --border-color: #e0e0e0;
+    --code-bg: rgba(224, 224, 224, 0.4);
     --link-color: #0066cc;
     --nav-bg: #fff;
     --button-bg: #333;
@@ -25,6 +26,7 @@
     --text-heading: #f0f0f0;
     --text-meta: #a0a0a0;
     --border-color: #404040;
+    --code-bg: rgba(64, 64, 64, 0.4);
     --link-color: #6699ff;
     --nav-bg: #1a1a1a;
     --button-bg: #e0e0e0;
@@ -275,6 +277,35 @@ section {
 .blog-post ul {
     margin-top: 1rem;
     margin-bottom: 1.5rem;
+}
+
+.blog-post pre {
+    background-color: var(--code-bg);
+    padding: 1.5rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 2rem auto;
+    width: 52%;
+}
+
+.blog-post pre code {
+    display: block;
+    line-height: 1.6;
+    white-space: pre;
+    color: var(--text-color);
+}
+
+.blog-post code {
+    background-color: var(--code-bg);
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+    color: var(--text-color);
+}
+
+.blog-post pre code {
+    background-color: transparent;
+    padding: 0;
 }
 
 .blog-nav {
