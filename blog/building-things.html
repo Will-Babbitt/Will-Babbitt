@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>On Building Things - Will Babbitt</title>
     <link rel="stylesheet" href="../styles.css">
+    <script>
+        // Set theme before page renders to prevent flash
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
 </head>
 <body>
     <nav>
@@ -35,5 +42,8 @@
             </div>
         </article>
     </main>
+    
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+    <script src="../theme.js"></script>
 </body>
 </html>
