@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score Keeper</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght:400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(135deg, #0a0015 0%, #1a0033 50%, #0f001a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Animated grid background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 0, 128, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            z-index: 0;
+        }
+        
+        @keyframes gridMove {
+            0% {
+                transform: perspective(500px) rotateX(60deg) translateY(0);
+            }
+            100% {
+                transform: perspective(500px) rotateX(60deg) translateY(50px);
+            }
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 1;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 3rem;
+            color: #ff0080;
+            text-transform: uppercase;
+            letter-spacing: 0.3rem;
+            text-shadow: 
+                0 0 10px #ff0080,
+                0 0 20px #ff0080,
+                0 0 30px #ff0080,
+                0 0 40px #ff0080,
+                0 0 70px #ff0080,
+                0 0 80px #ff0080,
+                0 0 100px #ff0080;
+            animation: flicker 3s infinite alternate;
+        }
+        
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                text-shadow: 
+                    0 0 10px #ff0080,
+                    0 0 20px #ff0080,
+                    0 0 30px #ff0080,
+                    0 0 40px #ff0080,
+                    0 0 70px #ff0080,
+                    0 0 80px #ff0080,
+                    0 0 100px #ff0080;
+            }
+            20%, 24%, 55% {        
+                text-shadow: none;
+            }
+        }
+        
+        .scoreboard {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4rem;
+            padding: 3rem;
+            background: rgba(10, 0, 30, 0.6);
+            border: 3px solid #00ffff;
+            border-radius: 20px;
+            box-shadow: 
+                0 0 20px #00ffff,
+                0 0 40px #00ffff,
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
+        }
+        
+        .score-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .player-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            color: #00ffff;
+            text-shadow: 
+                0 0 10px #00ffff,
+                0 0 20px #00ffff,
+                0 0 30px #00ffff;
+        }
+        
+        .score {
+            font-size: 8rem;
+            font-weight: 900;
+            background: linear-gradient(180deg, #ff0080 0%, #ff6ec7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px #ff0080) 
+                    drop-shadow(0 0 40px #ff0080)
+                    drop-shadow(0 0 60px #ff0080);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        .separator {
+            font-size: 6rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 
+                0 0 10px #fff,
+                0 0 20px #00ffff,
+                0 0 30px #00ffff,
+                0 0 40px #00ffff;
+        }
+        
+        /* Glowing orbs in background */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.3;
+            animation: float 10s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        .orb1 {
+            width: 300px;
+            height: 300px;
+            background: #ff0080;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .orb2 {
+            width: 400px;
+            height: 400px;
+            background: #00ffff;
+            bottom: 10%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+        
+        .orb3 {
+            width: 250px;
+            height: 250px;
+            background: #ff6ec7;
+            top: 50%;
+            right: 20%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+            }
+            33% {
+                transform: translateY(-30px) translateX(20px);
+            }
+            66% {
+                transform: translateY(30px) translateX(-20px);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 2rem;
+            }
+            
+            .scoreboard {
+                gap: 2rem;
+                padding: 2rem;
+            }
+            
+            .score {
+                font-size: 5rem;
+            }
+            
+            .separator {
+                font-size: 4rem;
+            }
+            
+            .player-name {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+    
+    <div class="container">
+        <h1>Score Keeper</h1>
+        <div class="scoreboard">
+            <div class="score-section">
+                <div class="player-name">Will</div>
+                <div class="score">1</div>
+            </div>
+            
+            <div class="separator">:</div>
+            
+            <div class="score-section">
+                <div class="player-name">Shar</div>
+                <div class="score">0</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
