@@ -205,6 +205,69 @@
             }
         }
         
+        .history {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(10, 0, 30, 0.6);
+            border: 2px solid #ff0080;
+            border-radius: 15px;
+            box-shadow: 
+                0 0 15px #ff0080,
+                inset 0 0 15px rgba(255, 0, 128, 0.1);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .history h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #00ffff;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 
+                0 0 10px #00ffff,
+                0 0 20px #00ffff;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .history-table th,
+        .history-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .history-table th {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ff6ec7;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            text-shadow: 0 0 10px #ff6ec7;
+        }
+        
+        .history-table td {
+            font-size: 0.9rem;
+            color: #00ffff;
+            font-weight: 400;
+        }
+        
+        .history-table tr:hover {
+            background: rgba(255, 0, 128, 0.1);
+        }
+        
+        .winner {
+            font-weight: 700;
+            color: #ff0080;
+            text-shadow: 0 0 10px #ff0080;
+        }
+        
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
@@ -226,6 +289,21 @@
             
             .player-name {
                 font-size: 1.2rem;
+            }
+            
+            .history {
+                padding: 1.5rem;
+                margin-top: 2rem;
+            }
+            
+            .history h2 {
+                font-size: 1.3rem;
+            }
+            
+            .history-table th,
+            .history-table td {
+                padding: 0.7rem;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -249,6 +327,26 @@
                 <div class="player-name">Shar</div>
                 <div class="score">0</div>
             </div>
+        </div>
+        
+        <div class="history">
+            <h2>Bet History</h2>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Bet</th>
+                        <th>Winner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>01.15.26</td>
+                        <td>Will bet Shar that Sam the neighbor's cat was named "Kitty"</td>
+                        <td class="winner">Will</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </body>
