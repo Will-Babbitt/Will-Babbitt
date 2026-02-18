@@ -319,14 +319,14 @@
         <div class="scoreboard">
             <div class="score-section">
                 <div class="player-name">Will</div>
-                <div class="score">1</div>
+                <div class="score" id="score-will">0</div>
             </div>
             
             <div class="separator">:</div>
             
             <div class="score-section">
                 <div class="player-name">Shar</div>
-                <div class="score">1</div>
+                <div class="score" id="score-shar">0</div>
             </div>
         </div>
         
@@ -340,20 +340,12 @@
                         <th>Winner</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>01.15.26</td>
-                        <td>Will bet Shar that Sam the neighbor's cat was named "Kitty"</td>
-                        <td class="winner">Will</td>
-                    </tr>
-                    <tr>
-                        <td>02.12.26</td>
-                        <td>Will bet Shar she would *not* do laundry before he arrived in Hanover</td>
-                        <td class="winner">Shar</td>
-                    </tr>
+                <tbody id="bet-history">
                 </tbody>
             </table>
         </div>
     </div>
+
+    <script src="score-keeper.js"></script>
 </body>
 </html>
