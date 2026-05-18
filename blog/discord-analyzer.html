@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekend Project - Discord Chat Analyzer - Will Babbitt</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+</head>
+<body>
+    <nav>
+        <a href="../index.html">Home</a>
+        <a href="../about.html">About</a>
+        <a href="../blog.html">Blog</a>
+    </nav>
+
+    <main class="content">
+        <article class="blog-post">
+            <h1>Weekend Project - Discord Chat Analyzer</h1>
+            <p class="meta">May 2026</p>
+
+            <!-- ============================================================
+                 BRAINSTORM — rough material to build the post around
+                 (delete this section before publishing)
+            ================================================================
+
+            OPENING / HOOK
+            - A group chat with the same six friends going back to 2015
+            - Always been curious about the patterns in 10 years of conversation
+            - A weekend to actually find out
+
+            PART 1 — EXTRACTION (Discord bot + DiscordChatExporter)
+            - Can't just scrape Discord without a bot — terms of service
+            - Created a Discord application in the developer portal
+            - Added a bot, enabled Message Content Intent (without this exports are empty)
+            - Used DiscordChatExporter CLI (open source, tyrrrz/DiscordChatExporter on GitHub)
+            - Wrote a small bash script to export year-by-year automatically
+            - Output format: JSON (richer than CSV for a web app — reactions, embeds, metadata)
+            - One wrinkle: Brendan got banned and came back — had to map deleted accounts to his real name
+
+            PART 2 — THE WEBAPP (Claude Code, React, Vite)
+            - Wanted to visualize it properly, not just poke around in a spreadsheet
+            - Chose all client-side processing (no backend, data never leaves the browser)
+            - Stack: React + TypeScript + Vite + Recharts + Tailwind
+            - Used Claude Code to build the whole thing — describe what I want, it writes it
+            - What that actually looks like in practice: iterative, conversational, fast
+            - Interesting engineering decisions:
+                * Mapping Discord user IDs to real names across multiple accounts
+                * Deduplicating messages when year ranges overlap
+                * Normalizing activity data per-user for fair habit comparison
+                * Mention detection: both @pings and name mentions in message text
+            - Deployed as a subfolder of babbitt.dev/discord-analyzer (GitHub Pages, free)
+
+            CONCLUSION
+            - What I found out about the group (tease a few stats — leave details vague or fun)
+            - The value of small scoped projects with a clear finish line
+            - Wanting to do more of these
+            ================================================================ -->
+
+            <!-- PART 1: EXTRACTION -->
+            <h2>...</h2>
+            <p></p>
+
+            <!-- PART 2: THE WEBAPP -->
+            <h2>...</h2>
+            <p></p>
+
+            <!-- CONCLUSION -->
+            <h2>...</h2>
+            <p></p>
+
+            <!-- ============================================================
+                 TECHNICAL FACTS TO TOUCH ON (for your reference)
+            ================================================================
+
+            DISCORD / EXTRACTION
+            - Discord ToS prohibits scraping without authorization — a bot is the right path
+            - Bot requires "Message Content Intent" enabled under Privileged Gateway Intents
+              in the developer portal, otherwise exported message content is empty
+            - DiscordChatExporter is a popular open source .NET CLI tool by Tyrrrz
+            - Supports JSON, CSV, HTML export formats; JSON preserves the most metadata
+            - The bash script uses --after / --before flags to slice by year
+            - The group chat goes back to December 2015 — ~10 years of data
+            - Total message count across all years: worth mentioning the scale
+            - Brendan had two "Deleted User" accounts from being banned — identified by
+              author ID and the "Deleted User" username fallback
+
+            WEBAPP / TECH
+            - Vite + React + TypeScript (Vite chosen because it's fast and simple to configure)
+            - Recharts for all charts — TypeScript-native, composable, works well with React
+            - Tailwind CSS for styling — utility-first, no separate CSS files to manage
+            - All processing is synchronous in-browser — no server, no data uploaded anywhere
+            - ZIP upload supported via JSZip — drag in the whole exports folder zipped
+            - The base path config (base: '/discord-analyzer/') is the one Vite gotcha for
+              GitHub Pages subdirectory deploys
+            - Mention detection uses word-boundary regex per person + Discord's mentions array,
+              deduplicated so one message = at most one count per target
+            - Activity normalization: each user's hourly/DOW/monthly data shown as % of their
+              own total so volume differences don't obscure habit patterns
+            - Deployed to babbitt.dev/discord-analyzer — just copying dist/ into a subfolder
+              of the existing GitHub Pages repo
+
+            CLAUDE CODE
+            - Describe what you want in plain English, Claude writes the code, you review it
+            - Good at keeping track of the data model across multiple files
+            - Iterative: each feature built and tested before moving to the next
+            - Saved a large amount of time on boilerplate (Recharts wiring, TypeScript types,
+              Tailwind layout) that would otherwise be slow to write by hand
+            ================================================================ -->
+
+            <div class="blog-nav">
+                <a href="../blog.html">← Back to Blog</a>
+            </div>
+        </article>
+    </main>
+
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+    <script src="../theme.js"></script>
+</body>
+</html>
