@@ -40,6 +40,9 @@
 
     --hover-tint: rgba(76, 110, 245, 0.08);
     --hover-line: rgba(76, 110, 245, 0.55);
+
+    --select-line: #4c6ef5;
+    --select-bg: #f3f5ff;
   }
 
   * { box-sizing: border-box; }
@@ -209,6 +212,74 @@
     background: var(--hover-tint);
   }
 
+  td { cursor: pointer; }
+
+  /* click-to-select defender types */
+  td.picked {
+    box-shadow: inset 0 0 0 2px var(--select-line), inset 0 0 0 4px rgba(255,255,255,0.6);
+  }
+  th.type-col.picked .badge.col,
+  th.type-row.picked .badge.row {
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25), 0 0 0 2px var(--select-line);
+  }
+
+  .selection-panel {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--select-bg);
+  }
+  .selection-body {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--muted);
+    min-height: 26px;
+  }
+  .selection-body .pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.25);
+  }
+  .selection-body .op {
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .selection-body .result {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .selection-body .result.super { color: var(--super); }
+  .selection-body .result.not-very { color: var(--not-very); }
+  .selection-body .result.immune { color: var(--not-very); }
+  .reset-btn {
+    flex: 0 0 auto;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--text);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .reset-btn:hover { background: var(--bg); }
+
   .legend {
     max-width: 1400px;
     margin: 20px auto 0;
@@ -244,9 +315,13 @@
 <body>
 
   <h1>Pokémon Type Effectiveness Chart</h1>
-  <p class="subtitle">Rows attack, columns defend. Hover a cell to trace its row and column.</p>
+  <p class="subtitle">Rows attack, columns defend. Click cells in one row to build a dual-type defender's cumulative multiplier.</p>
 
   <div class="chart-wrap">
+    <div class="selection-panel">
+      <div class="selection-body" id="selection-body">Click a cell to pick an attacker and a defending type.</div>
+      <button class="reset-btn" id="reset-btn" type="button">Reset</button>
+    </div>
     <div class="scroll-area">
       <table id="chart"></table>
     </div>
@@ -338,6 +413,7 @@
       td.className = cellClass(mult);
       td.dataset.row = rowIdx;
       td.dataset.col = colIdx;
+      td.dataset.mult = mult;
       if (atk === def) td.classList.add("self");
       td.textContent = cellLabel(mult);
       tr.appendChild(td);
@@ -368,6 +444,80 @@
     if (col !== undefined) {
       table.querySelectorAll(`[data-col="${col}"]`).forEach(el => el.classList.remove("hi-col"));
     }
+  });
+
+  // click-to-select: pick an attacker row, then one or more defender columns
+  // in that row to build a cumulative multiplier for a multi-typed defender
+  const fractionLabels = { 0.5: "½", 0.25: "¼", 0.125: "⅛", 0.0625: "1/16" };
+  const factorLabel = m => (m in fractionLabels) ? fractionLabels[m] : String(m);
+  const resultLabel = m => (m in fractionLabels) ? fractionLabels[m] + "×" : m + "×";
+  const resultClass = m => m === 0 ? "immune" : m < 1 ? "not-very" : m > 1 ? "super" : "";
+
+  const selectionBody = document.getElementById("selection-body");
+  const resetBtn = document.getElementById("reset-btn");
+
+  let selectedRow = null;      // attacker row index
+  let selectedCols = [];       // ordered list of {col, mult} for picked defender types
+
+  function clearSelectionClasses() {
+    table.querySelectorAll(".picked").forEach(el => el.classList.remove("picked"));
+  }
+
+  function renderSelection() {
+    clearSelectionClasses();
+
+    if (selectedRow === null || selectedCols.length === 0) {
+      selectionBody.innerHTML = "Click a cell to pick an attacker and a defending type.";
+      return;
+    }
+
+    const atkType = TYPES[selectedRow];
+    table.querySelectorAll(`th.type-row[data-row="${selectedRow}"]`).forEach(el => el.classList.add("picked"));
+
+    let cumulative = 1;
+    const parts = [];
+    selectedCols.forEach(({ col, mult }, i) => {
+      cumulative *= mult;
+      table.querySelectorAll(`td[data-row="${selectedRow}"][data-col="${col}"]`).forEach(el => el.classList.add("picked"));
+      table.querySelectorAll(`th.type-col[data-col="${col}"]`).forEach(el => el.classList.add("picked"));
+      if (i > 0) parts.push(`<span class="op">×</span>`);
+      parts.push(`<span class="pill" style="background:var(--${slug(TYPES[col])})">${TYPES[col]} ${factorLabel(mult)}</span>`);
+    });
+
+    selectionBody.innerHTML = `
+      <span class="pill" style="background:var(--${slug(atkType)})">${atkType} attacks</span>
+      ${parts.join(" ")}
+      <span class="op">=</span>
+      <span class="result ${resultClass(cumulative)}">${resultLabel(cumulative)}</span>
+    `;
+  }
+
+  table.addEventListener("click", (e) => {
+    const td = e.target.closest("td");
+    if (!td) return;
+    const row = Number(td.dataset.row);
+    const col = Number(td.dataset.col);
+    const mult = Number(td.dataset.mult);
+
+    if (selectedRow !== row) {
+      selectedRow = row;
+      selectedCols = [{ col, mult }];
+    } else {
+      const idx = selectedCols.findIndex(c => c.col === col);
+      if (idx === -1) {
+        selectedCols.push({ col, mult });
+      } else {
+        selectedCols.splice(idx, 1);
+        if (selectedCols.length === 0) selectedRow = null;
+      }
+    }
+    renderSelection();
+  });
+
+  resetBtn.addEventListener("click", () => {
+    selectedRow = null;
+    selectedCols = [];
+    renderSelection();
   });
 </script>
 </body>
