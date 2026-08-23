@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pokémon Type Chart</title>
+<style>
+  :root {
+    --normal:   #A8A878;
+    --fire:     #F08030;
+    --water:    #6890F0;
+    --grass:    #78C850;
+    --electric: #F8D030;
+    --ice:      #98D8D8;
+    --fighting: #C03028;
+    --poison:   #A040A0;
+    --ground:   #E0C068;
+    --flying:   #A890F0;
+    --psychic:  #F85888;
+    --bug:      #A8B820;
+    --rock:     #B8A038;
+    --ghost:    #705898;
+    --dragon:   #7038F8;
+    --dark:     #705848;
+    --steel:    #B8B8D0;
+    --fairy:    #EE99AC;
+
+    --bg:        #f4f5f7;
+    --panel:     #ffffff;
+    --border:    #e2e4e9;
+    --text:      #1f2330;
+    --muted:     #6b7280;
+
+    --super:     #2f9e44;   /* 2x */
+    --super-bg:  #d9f2df;
+    --not-very:  #c92a2a;   /* 0.5x */
+    --not-very-bg: #fbdede;
+    --immune-bg: #1f2330;   /* 0x */
+    --immune-fg: #ffffff;
+
+    --hover-tint: rgba(76, 110, 245, 0.08);
+    --hover-line: rgba(76, 110, 245, 0.55);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 32px 24px 60px;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+  }
+
+  h1 {
+    margin: 0 0 4px;
+    font-size: 1.6rem;
+    text-align: center;
+  }
+
+  p.subtitle {
+    margin: 0 0 28px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .chart-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+  }
+
+  .scroll-area {
+    overflow-x: auto;
+    border-radius: 10px;
+  }
+
+  table {
+    border-collapse: separate;
+    border-spacing: 4px;
+    margin: 0 auto;
+  }
+
+  /* corner cell */
+  th.corner {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    background:
+      linear-gradient(135deg, #eef1ff 50%, #fff0f4 50%);
+    border-radius: 10px;
+    width: 108px;
+    min-width: 108px;
+    height: 108px;
+    padding: 0;
+  }
+  .corner-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .corner-label {
+    position: absolute;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    text-transform: uppercase;
+  }
+  .corner-label.defender { top: 8px; right: 8px; text-align: right; }
+  .corner-label.attacker { bottom: 8px; left: 8px; }
+
+  /* column headers */
+  thead th.type-col {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    padding: 0;
+  }
+
+  .badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.25);
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25), 0 1px 2px rgba(0,0,0,0.12);
+    white-space: nowrap;
+  }
+
+  .badge.col {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    width: 34px;
+    height: 108px;
+    margin: 0 auto;
+  }
+
+  /* row headers */
+  tbody th.type-row {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    padding: 0;
+  }
+
+  .badge.row {
+    width: 108px;
+    height: 34px;
+    justify-content: flex-start;
+    padding-left: 14px;
+  }
+
+  td {
+    text-align: center;
+    vertical-align: middle;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-radius: 8px;
+    background: #fbfbfc;
+    color: var(--text);
+    border: 1px solid var(--border);
+    transition: outline-color 0.1s ease, background-color 0.1s ease;
+  }
+
+  td.neutral {
+    background: #fbfbfc;
+    color: transparent;
+  }
+
+  td.super {
+    background: var(--super-bg);
+    color: var(--super);
+  }
+
+  td.not-very {
+    background: var(--not-very-bg);
+    color: var(--not-very);
+  }
+
+  td.immune {
+    background: var(--immune-bg);
+    color: var(--immune-fg);
+  }
+
+  td.self {
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.08);
+  }
+
+  /* hover highlighting */
+  td.hi-row, td.hi-col {
+    outline: 2px solid var(--hover-line);
+    outline-offset: -2px;
+  }
+  tr.hi-row-bg td:not(.super):not(.not-very):not(.immune) {
+    background: var(--hover-tint);
+  }
+
+  .legend {
+    max-width: 1400px;
+    margin: 20px auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 22px;
+    justify-content: center;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .legend .item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .legend .swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+  }
+  .legend .swatch.super { background: var(--super-bg); box-shadow: inset 0 0 0 1px var(--super); }
+  .legend .swatch.not-very { background: var(--not-very-bg); box-shadow: inset 0 0 0 1px var(--not-very); }
+  .legend .swatch.immune { background: var(--immune-bg); }
+  .legend .swatch.neutral { background: #fbfbfc; }
+
+  @media (max-width: 700px) {
+    body { padding: 20px 12px 40px; }
+    .chart-wrap { padding: 12px; border-radius: 12px; }
+  }
+</style>
+</head>
+<body>
+
+  <h1>Pokémon Type Effectiveness Chart</h1>
+  <p class="subtitle">Rows attack, columns defend. Hover a cell to trace its row and column.</p>
+
+  <div class="chart-wrap">
+    <div class="scroll-area">
+      <table id="chart"></table>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="item"><span class="swatch super"></span>2× super effective</div>
+    <div class="item"><span class="swatch not-very"></span>½× not very effective</div>
+    <div class="item"><span class="swatch immune"></span>0× no effect</div>
+    <div class="item"><span class="swatch neutral"></span>1× normal damage (blank)</div>
+  </div>
+
+<script>
+  const TYPES = ["Normal","Fire","Water","Grass","Electric","Ice","Fighting","Poison",
+                 "Ground","Flying","Psychic","Bug","Rock","Ghost","Dragon","Dark","Steel","Fairy"];
+
+  // attacker -> { defender: multiplier }; anything omitted defaults to 1x
+  const CHART = {
+    Normal:    { Rock:0.5, Ghost:0, Steel:0.5 },
+    Fire:      { Fire:0.5, Water:0.5, Grass:2, Ice:2, Bug:2, Rock:0.5, Dragon:0.5, Steel:2 },
+    Water:     { Fire:2, Water:0.5, Grass:0.5, Ground:2, Rock:2, Dragon:0.5 },
+    Grass:     { Fire:0.5, Water:2, Grass:0.5, Poison:0.5, Ground:2, Flying:0.5, Bug:0.5, Rock:2, Dragon:0.5, Steel:0.5 },
+    Electric:  { Water:2, Electric:0.5, Grass:0.5, Ground:0, Flying:2, Dragon:0.5 },
+    Ice:       { Fire:0.5, Water:0.5, Grass:2, Ice:0.5, Ground:2, Flying:2, Dragon:2, Steel:0.5 },
+    Fighting:  { Normal:2, Ice:2, Poison:0.5, Flying:0.5, Psychic:0.5, Bug:0.5, Rock:2, Ghost:0, Dark:2, Steel:2, Fairy:0.5 },
+    Poison:    { Grass:2, Poison:0.5, Ground:0.5, Rock:0.5, Ghost:0.5, Steel:0, Fairy:2 },
+    Ground:    { Fire:2, Electric:2, Grass:0.5, Poison:2, Flying:0, Bug:0.5, Rock:2, Steel:2 },
+    Flying:    { Electric:0.5, Grass:2, Fighting:2, Bug:2, Rock:0.5, Steel:0.5 },
+    Psychic:   { Fighting:2, Poison:2, Psychic:0.5, Dark:0, Steel:0.5 },
+    Bug:       { Fire:0.5, Grass:2, Fighting:0.5, Poison:0.5, Flying:0.5, Psychic:2, Ghost:0.5, Dark:2, Steel:0.5, Fairy:0.5 },
+    Rock:      { Fire:2, Ice:2, Fighting:0.5, Ground:0.5, Flying:2, Bug:2, Steel:0.5 },
+    Ghost:     { Normal:0, Psychic:2, Ghost:2, Dark:0.5 },
+    Dragon:    { Dragon:2, Steel:0.5, Fairy:0 },
+    Dark:      { Fighting:0.5, Psychic:2, Ghost:2, Dark:0.5, Fairy:0.5 },
+    Steel:     { Fire:0.5, Water:0.5, Electric:0.5, Ice:2, Rock:2, Steel:0.5, Fairy:2 },
+    Fairy:     { Fire:0.5, Fighting:2, Poison:0.5, Dragon:2, Dark:2, Steel:0.5 },
+  };
+
+  const slug = t => t.toLowerCase();
+
+  function cellClass(mult) {
+    if (mult === 0) return "immune";
+    if (mult === 0.5) return "not-very";
+    if (mult === 2) return "super";
+    return "neutral";
+  }
+  function cellLabel(mult) {
+    if (mult === 0) return "0";
+    if (mult === 0.5) return "½";
+    if (mult === 2) return "2";
+    return "";
+  }
+
+  const table = document.getElementById("chart");
+  const thead = table.createTHead();
+  const headRow = thead.insertRow();
+
+  const corner = document.createElement("th");
+  corner.className = "corner";
+  corner.innerHTML = `<div class="corner-inner">
+      <span class="corner-label defender">Defender ▸</span>
+      <span class="corner-label attacker">Attacker ▾</span>
+    </div>`;
+  headRow.appendChild(corner);
+
+  TYPES.forEach((def, colIdx) => {
+    const th = document.createElement("th");
+    th.className = "type-col";
+    th.dataset.col = colIdx;
+    th.innerHTML = `<div class="badge col" style="background:var(--${slug(def)})">${def}</div>`;
+    headRow.appendChild(th);
+  });
+
+  const tbody = table.createTBody();
+
+  TYPES.forEach((atk, rowIdx) => {
+    const tr = tbody.insertRow();
+    tr.dataset.row = rowIdx;
+
+    const th = document.createElement("th");
+    th.className = "type-row";
+    th.dataset.row = rowIdx;
+    th.innerHTML = `<div class="badge row" style="background:var(--${slug(atk)})">${atk}</div>`;
+    tr.appendChild(th);
+
+    TYPES.forEach((def, colIdx) => {
+      const mult = (CHART[atk] && CHART[atk][def] !== undefined) ? CHART[atk][def] : 1;
+      const td = document.createElement("td");
+      td.className = cellClass(mult);
+      td.dataset.row = rowIdx;
+      td.dataset.col = colIdx;
+      if (atk === def) td.classList.add("self");
+      td.textContent = cellLabel(mult);
+      tr.appendChild(td);
+    });
+  });
+
+  // hover highlighting for row + column
+  table.addEventListener("mouseover", (e) => {
+    const cell = e.target.closest("td, th");
+    if (!cell || cell.dataset.row === undefined && cell.dataset.col === undefined) return;
+    const row = cell.dataset.row;
+    const col = cell.dataset.col;
+    if (row !== undefined) {
+      table.querySelectorAll(`[data-row="${row}"]`).forEach(el => el.classList.add("hi-row"));
+    }
+    if (col !== undefined) {
+      table.querySelectorAll(`[data-col="${col}"]`).forEach(el => el.classList.add("hi-col"));
+    }
+  });
+  table.addEventListener("mouseout", (e) => {
+    const cell = e.target.closest("td, th");
+    if (!cell) return;
+    const row = cell.dataset.row;
+    const col = cell.dataset.col;
+    if (row !== undefined) {
+      table.querySelectorAll(`[data-row="${row}"]`).forEach(el => el.classList.remove("hi-row"));
+    }
+    if (col !== undefined) {
+      table.querySelectorAll(`[data-col="${col}"]`).forEach(el => el.classList.remove("hi-col"));
+    }
+  });
+</script>
+</body>
+</html>
